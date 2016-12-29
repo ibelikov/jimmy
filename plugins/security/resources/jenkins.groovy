@@ -19,14 +19,9 @@ import hudson.model.Computer
 import hudson.model.Hudson
 import hudson.model.Run
 import hudson.model.View
-import hudson.security.ProjectMatrixAuthorizationStrategy
-import hudson.security.AuthorizationStrategy
 import hudson.security.Permission
 import jenkins.model.Jenkins
 import com.cloudbees.plugins.credentials.CredentialsProvider
-import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials
-import com.cloudbees.plugins.credentials.domains.SchemeRequirement
-import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl
 import hudson.scm.SCM
 
@@ -131,7 +126,6 @@ class Actions {
 
   void set_security_password(String user, String pub_keys=null, String password=null, String email=null, String name=null) {
     def instance = Jenkins.getInstance()
-    def overwrite_permissions
     def strategy
     def realm
     strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()

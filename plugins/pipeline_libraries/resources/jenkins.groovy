@@ -20,7 +20,6 @@ import hudson.plugins.git.BranchSpec
 import hudson.plugins.git.SubmoduleConfig
 import hudson.plugins.git.extensions.GitSCMExtension
 import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration
-import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
 import org.jenkinsci.plugins.workflow.libs.SCMRetriever
 
 class Actions {

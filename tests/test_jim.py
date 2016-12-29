@@ -42,9 +42,15 @@ class TestJimmySchema(base.TestCase):
         jsonschema.validate(repo_data, schema)
 
     def test_validation_fail_for_envs_required_property(self):
+
+        # Create config without envs entry
         with open(jimmy_yaml_path, 'r') as f:
-            jimmy_yaml = f.read()
-            mock_jimmy_yaml = jimmy_yaml.replace("envs:", "")
+            mock_jimmy_yaml = ""
+            for line in f:
+                if line.startswith("envs:"):
+                    break
+                mock_jimmy_yaml += line
+
         self.mfs = mockfs.replace_builtins()
         self.mfs.add_entries({jimmy_yaml_path: mock_jimmy_yaml,
                               jimmy_schema_path: self.jimmy_schema})

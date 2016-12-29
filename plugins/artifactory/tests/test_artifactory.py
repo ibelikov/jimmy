@@ -149,8 +149,9 @@ class TestArtifactorySchema(object):
               'build_info_proxy:',
               '  port: test',
               'servers:',
-              '  url: artifactory.example.com',
-              '  deployer_credentials_id: artifactory-credentials'
+              '  - id: artifactory-server',
+              '    url: artifactory.example.com',
+              '    deployer_credentials_id: artifactory-credentials'
             ])
         })
         repo_data = yaml_reader.read(jenkins_yaml_path)
@@ -169,8 +170,9 @@ class TestArtifactorySchema(object):
         repo_data = yaml_reader.read(jenkins_yaml_path)
         with pytest.raises(jsonschema.ValidationError) as excinfo:
             jsonschema.validate(repo_data, self.schema)
-        assert excinfo.value.message == "{'url': 'artifactory.example.com'," \
-            " 'deployer_credentials_id': 'artifactory-credentials'} is not of type 'array'"
+        # dictionary can be printed differently,
+        # thus assert only the error message
+        assert excinfo.value.message.endswith(" is not of type 'array'")
 
     def test_validation_fail_for_id_required_property(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(

@@ -143,14 +143,14 @@ class TestJenkinsSchema(object):
               'agent_tcp_port: 50000',
               'admin_email: CI <test@example.com>',
               'location_url: http://example.com/jenkins/',
-              'markup_format: 123',
+              'markup_format: smth',
               'num_of_executors: 3'
             ])
         })
         repo_data = yaml_reader.read(jenkins_yaml_path)
         with pytest.raises(jsonschema.ValidationError) as excinfo:
             jsonschema.validate(repo_data, self.schema)
-        assert excinfo.value.message == "123 is not one of ['plain-text', 'raw-html', 'unsafe']"
+        assert excinfo.value.message == "'smth' is not one of ['plain-text', 'raw-html', 'unsafe']"
 
     def test_validation_fail_if_scm_is_not_int(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(

@@ -397,7 +397,7 @@ class TestCredentialsSchema(object):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
             [
               '    ssh:',
-              '    - scope: test',
+              '    - scope: global',
               '      username: user2'
             ])
         })

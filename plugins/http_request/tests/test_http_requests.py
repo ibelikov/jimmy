@@ -213,8 +213,8 @@ class TestHttpRequestSchema(object):
         repo_data = yaml_reader.read(jenkins_yaml_path)
         with pytest.raises(jsonschema.ValidationError) as excinfo:
             jsonschema.validate(repo_data, self.schema)
-        assert excinfo.value.message == "{'username': 'user', 'key_name': 'testauth', 'password': 'secret'} " \
-            "is not of type 'array'"
+        # assert only the error message not dictionary
+        assert excinfo.value.message.endswith(" is not of type 'array'")
 
     def test_validation_fail_for_additional_properties(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(

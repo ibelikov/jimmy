@@ -15,18 +15,15 @@
 */
 
 import jenkins.model.Jenkins
-import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
-import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
-import com.cloudbees.plugins.credentials.*
-import com.cloudbees.plugins.credentials.*
-import com.cloudbees.plugins.credentials.common.*
-import com.cloudbees.plugins.credentials.domains.*
-import com.cloudbees.plugins.credentials.domains.*
-import com.cloudbees.plugins.credentials.impl.*
-import com.cloudbees.plugins.credentials.impl.*
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey
+import com.cloudbees.plugins.credentials.CredentialsMatchers
+import com.cloudbees.plugins.credentials.CredentialsProvider
+import com.cloudbees.plugins.credentials.CredentialsScope
+import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials
+import com.cloudbees.plugins.credentials.domains.Domain
+import com.cloudbees.plugins.credentials.domains.SchemeRequirement
+import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl
 import hudson.model.User
-import hudson.plugins.sshslaves.*
-import jenkins.model.*
 
 class Actions {
   Actions(out) { this.out = out }

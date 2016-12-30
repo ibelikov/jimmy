@@ -55,7 +55,7 @@ class Actions {
           nodeLabeledPairs.add(new ThrottleJobProperty.NodeLabeledPair(throttleNodeLabelLst.get(i), Integer.parseInt(maxTotConcPerNodeLabeledLst.get(i))))
         }
       } else {
-          throw new Exception("the number of values in throttled_node_label doesn't match with values in max_conc_per_labeled")
+          throw new IllegalArgumentException("the number of values in throttled_node_label doesn't match with values in max_conc_per_labeled")
       }
     }
     categories.add(category)

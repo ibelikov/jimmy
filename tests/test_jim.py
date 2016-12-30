@@ -88,7 +88,7 @@ class TestJimmySchema(base.TestCase):
     def test_validation_fail_for_additional_properties(self):
         with open(jimmy_yaml_path, 'r') as f:
             jimmy_yaml = f.read()
-            mock_jimmy_yaml = jimmy_yaml.replace("plugin-directories:", "test:")
+            mock_jimmy_yaml = "\n".join([jimmy_yaml, "test:\n"])
         self.mfs = mockfs.replace_builtins()
         self.mfs.add_entries({jimmy_yaml_path: mock_jimmy_yaml,
                               jimmy_schema_path: self.jimmy_schema})

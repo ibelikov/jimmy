@@ -73,6 +73,7 @@ config = {
                     'gearman/resources/*',
                     'http_request/resources/*',
                     'jenkins_configuration/resources/*',
+                    'kubernetes/resources/*',
                     'pipeline_libraries/resources/*',
                     'security/resources/*',
                     'throttle/resources/*'],

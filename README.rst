@@ -1,4 +1,10 @@
-Jimmy is a command line tool to manage Jenkins Master configuration,
+.. image:: https://ci-team.github.io/logo+title_small.png
+
+.. image:: https://travis-ci.org/ci-team/jimmy.svg?branch=master
+    :target: https://travis-ci.org/ci-team/jimmy
+
+Jimmy is a command line tool to manage `Jenkins <https://jenkins.io>`_
+Master configuration,
 including Jenkins plugin parameters like Gerrit URL for Gerrit Trigger
 plugin or global credentials.
 
@@ -31,19 +37,8 @@ How to use
      envs:
        my_jenkins:
          jenkins_url: http://localhost:8080
-	 jenkins_config_path: my_jenkins.yaml
+         jenkins_config_path: my_jenkins.yaml
 
 #. Run::
 
      $ python jimmy.py --conf-path jimmy.yaml -e my_jenkins
-
-Contacts
-========
-
-Tool is maintained by `Fuel Infra <https://wiki.openstack.org/wiki/Fuel>`_ team.
-
-* IRC: #fuel at Freenode.
-* Bugs: `Fuel project in Launchpad <https://bugs.launchpad.net/fuel/>`_, use tag `jimmy`.
-
-
-

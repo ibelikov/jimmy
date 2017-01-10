@@ -65,6 +65,10 @@ class TestCredentialsPlugin(base.TestCase):
                                       '      username: user2',
                                       '      private_key: /home/user/.ssh/id_rsa',
                                       '      id: this-is-an-id',
+                                      '    kubernetes:',
+                                      '    - id: kubernetes-credentials',
+                                      '      scope: global',
+                                      '      description: kubernetes.example.com service creds',
                                       '    token:',
                                       '    - scope: global',
                                       '      username: user',
@@ -106,6 +110,15 @@ class TestCredentialsPlugin(base.TestCase):
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
                        '-s', 'http://localhost:8080', 'groovy',
+                       plugins_dir + '/' + 'credentials/resources/kubernetes.groovy',
+                       'updateCredentials',
+                       'global',
+                       'kubernetes-credentials',
+                       'kubernetes.example.com service creds'],
+                      shell=False),
+                 call(['java',
+                       '-jar', '<< path to jenkins-cli.jar >>',
+                       '-s', 'http://localhost:8080', 'groovy',
                        plugins_dir + '/' + 'credentials/resources/jenkins.groovy',
                        'updateCredentials',
                        "'global'",
@@ -116,7 +129,7 @@ class TestCredentialsPlugin(base.TestCase):
                        "'user-token'"],
                       shell=False)]
         mock_subp.assert_has_calls(calls, any_order=True)
-        assert 3 == mock_subp.call_count, "subprocess call should be equal to 3"
+        assert 4 == mock_subp.call_count, "subprocess call should be equal to 4"
 
 
 class TestCredentialsSchema(object):

@@ -12,6 +12,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
+import os
 import subprocess
 from lib.api import BaseGroovyPlugin
 
@@ -63,6 +64,28 @@ class Credentials(BaseGroovyPlugin):
                                      ], shell=False)
                 except OSError:
                     self.logger.exception('Could not find java')
+
+        if "kubernetes" in data:
+            kubernetes_groovy_path = os.path.join(
+                self.class_base_dir,
+                'resources/kubernetes.groovy'
+            )
+            for k in data["kubernetes"]:
+                description = k.get("description", "")
+                try:
+                    subprocess.call(["java",
+                                     "-jar", jenkins_cli_path,
+                                     "-s", jenkins_url,
+                                     "groovy",
+                                     kubernetes_groovy_path,
+                                     "updateCredentials",
+                                     k["scope"],
+                                     k["id"],
+                                     description
+                                     ], shell=False)
+                except OSError:
+                    self.logger.exception('Could not find java')
+
         if "token" in data:
             for t in data["token"]:
                 description = t.get("description", "")

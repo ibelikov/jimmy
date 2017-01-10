@@ -42,6 +42,10 @@ jenkins:
       description: SSH Username with private key entered directly
       private_key: !include-relative-text:
         secret/admin.key
+    kubernetes:
+    - scope: global
+      id: kubernetes-credentials
+      description: Kubernetes Service Account token
     token:
     - scope: global
       username: service-user

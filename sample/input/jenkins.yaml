@@ -130,3 +130,56 @@ jenkins:
     cli_user:
       name: ldap-user
       public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNWgMf6IisSY0HK0mpHkgVhRxHsDom81PJ6W3jAgcSBWY1Kz/2vL98SK91ppgYmnDa2uLbchY2Xk9ciefMpm7Qq5EO6oSPKJJhADyCYAX/7YomZIy4Xu7HxEh0Z6VCLt0DymwN4tBS9JuTISvEm17BLgtis/AemA2eRIl0JAdPf9rmQps4KP5AhG60ucdtTKD0y8TFK95ateplgcq9JLRInhrdg/vnJLbKnV7lP1g5dfY1rm6bum7P+Jwf2tdTOa0b5ucK/+iWVbyPO4Z2afPpblh4Vynfe2wMzzpGAp3n5MwtH2EZmSXm/B6/CkgOFROsmWH8MzQEvNBGHhw+ONR9 jenkins@jenkins-master.test.local
+
+    kubernetes:
+      clouds:
+      - id: kubeCloud
+        server_url: kubernetes.example.com
+        server_certificate: ''
+        namespace: custom-namespace
+        credentials_id: kubernetes-credentials
+        jenkins_url: http://jenkins.kubernetes.local:8080
+        jenkins_tunnel: ''
+        disable_certificate_check: false
+        connection_timeout: 5
+        read_timeout: 15
+        container_cleanup_timeout: 5
+        container_cap: 10
+        pod_templates:
+        - name: kubeTemplate
+          labels: labl
+          inherit_from: ''
+          service_account: ''
+          node_selector: node=label
+          instance_cap: 10
+          idle_minutes: 15
+          volumes:
+            config_map:
+            - name: cfgmap_volume
+              mount_path: /mnt
+          annotations:
+          - key: key1
+            value: val1
+          env_vars:
+          - key: envvar1
+            value: envval1
+          image_pull_secrets:
+          - secret1
+          - secret2
+          containers:
+          - name: containerName
+            image: dockerImage
+            command: ls
+            arguments: '-l'
+            working_dir: /home/jenkins/workspace
+            enable_tty: false
+            always_pull_image: false
+            privileged: false
+            limit_cpu: ''
+            limit_memory: ''
+            request_cpu: ''
+            request_memory: ''
+            env_vars:
+            - key: contEnvVar1
+              value: contEnvVal1
+

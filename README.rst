@@ -8,7 +8,7 @@ Master configuration,
 including Jenkins plugin parameters like Gerrit URL for Gerrit Trigger
 plugin or global credentials.
 
-See `./plugins/` directory for full list of supported plugins.
+See `./modules/` directory for full list of supported Jenkins plugins.
 
 How to use
 ==========

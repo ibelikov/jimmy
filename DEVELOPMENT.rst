@@ -29,17 +29,17 @@ Repo Structure
 
   Directory containing libs for loggers, schema readers, validators.
 
-``plugins/plugin-name/``
+``modules/module-name/``
 
-  Each plugin is python module or package. Jimmy itself is just a runner which performs some pipelines
+  Each module is a python module or package. Jimmy itself is just a runner which performs some pipelines
   specified by jimmy configuration and script parameters. Every other functionality is implemented as
-  plugins (which may come with distribution or be added by end-user). For example, ``plugins/gearman/``
+  modules (which may come with distribution or be added by end-user). For example, ``modules/gearman/``
   package corresponds to Jenkins Gearman plugin configuration.
 
-``plugins/plugin-name/resources``
+``modules/module-name/resources``
 
   Such directory may contain schemas for validation, groovy scripts or other kind of resources required
-  for plugin functionality.
+  for module functionality.
 
 
 How Jimmy works
@@ -50,7 +50,7 @@ file jimmy.yaml consists of:
 - pipelines and steps to perform
 - params or injected data for each step
 
-Jimmy Runner looks for plugins(modules) and loads them. Then invokes these modules(plugins) for each pipeline step
+Jimmy Runner looks for modules and loads them. Then invokes these modules for each pipeline step
 defined in jimmy.yaml. The next steps included in jimmy.yaml:
 
   - read_source: Read source yaml file with Jenkins configuration
@@ -61,13 +61,13 @@ defined in jimmy.yaml. The next steps included in jimmy.yaml:
 You can see updated configuration after the all steps are successfully completed.
 
 
-Plugin description
+Module description
 ==================
-The Plugin is a base class which gives possibility to easily add other python modules or packages.
-This Plugin contain default relative paths to resources for other modules and methods to read source schemas and
-validate YAML configuration for this plugin. To write such Plugin you have to add some step in jimmy.yaml
-configuration file and then create a method with such name as step name under the Plugin class. And then you can
-invoke this Plugin.
+The Module is a base class which gives possibility to easily add other python modules or packages.
+This Module contain default relative paths to resources for other modules and methods to read source schemas and
+validate YAML configuration for this module. To write such Module you have to add some step in jimmy.yaml
+configuration file and then create a method with such name as step name under the Module class. And then you can
+invoke this Module.
 Example:
 
 Pipeline step defined in jimmy.yaml:
@@ -82,7 +82,7 @@ Pipeline step defined in jimmy.yaml:
       inject:
         source: results.build_source.source
 
-Method definition in Plugin class:
+Method definition in Module class:
 
 .. code-block:: python
 
@@ -94,8 +94,8 @@ Method definition in Plugin class:
 In this example if the validation fails, the method returns an error.
 
 
-Plugin should return dict with unique keys (if they aren't unique, jimmy will error about it). This dict could be used in further
-steps by injecting merged dict of all returned values from all plugins.
+Module should return dict with unique keys (if they aren't unique, jimmy will error about it). This dict could be used in further
+steps by injecting merged dict of all returned values from all modules.
 
 Example:
 
@@ -114,7 +114,7 @@ Pipeline steps:
       my_step_results: results.first_step
 
 
-Plugin method example:
+Module method example:
 
 .. code-block:: python
 
@@ -122,18 +122,18 @@ Plugin method example:
       return {'my_val': 1}
 
 
-How to write your own groovy-based plugin
+How to write your own groovy-based module
 =========================================
 
-Each plugin is python module or package which may came with distribution or be added by end-user.
-To create your own plugin you need:
+Each module is python module or package which may came with distribution or be added by end-user.
+To create your own module you need:
 
-1) Create new directory for plugin in plugins/plugin-name
-2) Create resources with schema and groovy script for this plugin:
+1) Create new directory for module in modules/module-name
+2) Create resources with schema and groovy script for this module:
    - Schema should describe parameters corresponded to this configuration.
-   - Groovy script must update configuration related to this plugin.
+   - Groovy script must update configuration related to this module.
 
-3) Create subclass of groovy plugin in plugins/plugin-name/impl.py and define method update_dest which will read
+3) Create subclass of groovy module in modules/module-name/impl.py and define method update_dest which will read
 data from source tree and then use subproccess to call jenkins cli and execute groovy script with arguments from source data.
 
 

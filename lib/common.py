@@ -140,27 +140,39 @@ class YamlWithImportsLoader(yaml.Loader):
             self.root = os.path.curdir
 
         # yaml.Loader requires unbound method ..
-        self.add_constructor('!include-relative-yaml:', self.__class__._include_relative_yaml)
-        self.add_constructor('!include-relative-text:', self.__class__._include_relative_text)
-        self.add_constructor('!include-relative-proplist:', self.__class__._include_relative_proplist)
+        self.add_constructor('!include-yaml:', self.__class__._include_yaml)
+        self.add_constructor('!include-text:', self.__class__._include_text)
+        self.add_constructor('!include-proplist:', self.__class__._include_proplist)
         self.add_constructor('!import-from-cfg:', self.__class__._import_from_cfg)
 
-    def _include_relative_text(self, node):
-        filename = os.path.join(self.root, self.construct_scalar(node))
+    def _include_text(self, node):
+        path = self.construct_scalar(node)
+        if path.startswith('/'):
+            filename = path
+        else:
+            filename = os.path.join(self.root, path)
         with open(filename, 'r') as f:
             data = f.read()
         return data
 
-    def _include_relative_yaml(self, node):
+    def _include_yaml(self, node):
         old_root = self.root
-        filename = os.path.join(self.root, self.construct_scalar(node))
+        path = self.construct_scalar(node)
+        if path.startswith('/'):
+            filename = path
+        else:
+            filename = os.path.join(self.root, path)
         self.root = os.path.dirname(filename)
         data = yaml.load(open(filename, 'r'), type(self))
         self.root = old_root
         return data
 
-    def _include_relative_proplist(self, node):
-        filename = os.path.join(self.root, self.construct_scalar(node))
+    def _include_proplist(self, node):
+        path = self.construct_scalar(node)
+        if path.startswith('/'):
+            filename = path
+        else:
+            filename = os.path.join(self.root, path)
         return proplist_reader.read(filename)
 
     def _import_from_cfg(self, node):

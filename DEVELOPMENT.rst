@@ -266,7 +266,7 @@ You can import key(admin.key) directly:
   gerrit:
     servers:
     - hostname: test-hostname
-      private_key: !include-relative-text:
+      private_key: !include-text:
         sample/input/secret/admin.key
 
 
@@ -288,5 +288,5 @@ Include other yamls:
   gerrit:
     servers:
       include:
-          !include-relative-yaml:
+          !include-yaml:
             ./include.yaml

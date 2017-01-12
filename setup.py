@@ -16,10 +16,6 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-PROJECT = 'jimmy'
-
-VERSION = '0.2'
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -65,21 +61,20 @@ config = {
 
     'packages': find_packages(),
     'package_data': {
-        'lib': ['schema.yaml'],
-        'modules': ['artifactory/resources/*',
-                    'credentials/resources/*',
-                    'git/resources/*',
-                    'gerrit/resources/*',
-                    'gearman/resources/*',
-                    'http_request/resources/*',
-                    'jenkins_configuration/resources/*',
-                    'kubernetes/resources/*',
-                    'pipeline_libraries/resources/*',
-                    'security/resources/*',
-                    'slack/resources/*',
-                    'throttle/resources/*'],
+        'jimmy': ['lib/schema.yaml',
+                  'modules/artifactory/resources/*',
+                  'modules/credentials/resources/*',
+                  'modules/git/resources/*',
+                  'modules/gerrit/resources/*',
+                  'modules/gearman/resources/*',
+                  'modules/http_request/resources/*',
+                  'modules/jenkins_configuration/resources/*',
+                  'modules/kubernetes/resources/*',
+                  'modules/pipeline_libraries/resources/*',
+                  'modules/security/resources/*',
+                  'modules/slack/resources/*',
+                  'modules/throttle/resources/*'],
     },
-    'py_modules': ['jimmy'],
     'entry_points': {
         'console_scripts': [
             'jimmy = jimmy:cli',

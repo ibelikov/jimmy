@@ -1,10 +1,10 @@
-# Enable all core plugins (those included in the jimmy repository)
-include-default-plugins: true
+# Enable all core modules (those included in the jimmy repository)
+include-default-modules: true
 
-# list of paths for additional plugins
-#plugin-directories:
-#  - ./custom-plugins
-#  - /some/external/plugins
+# list of paths for additional modules
+#module-directories:
+#  - ./custom-modules
+#  - /some/external/modules
 
 defaults:
   inject:

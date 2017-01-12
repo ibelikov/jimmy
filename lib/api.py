@@ -18,7 +18,7 @@ import os
 from lib.common import TreeHelpersMixin, ReadersMixin, LoggerMixin
 
 
-class Plugin(TreeHelpersMixin, ReadersMixin, LoggerMixin):
+class Module(TreeHelpersMixin, ReadersMixin, LoggerMixin):
     @property
     def class_base_dir(self):
         """
@@ -36,13 +36,13 @@ class Plugin(TreeHelpersMixin, ReadersMixin, LoggerMixin):
         return os.path.join(self.class_base_dir, subpath)
 
 
-class BaseGroovyPlugin(Plugin):
+class BaseGroovyModule(Module):
     """
-    Base class for Grovy plugins definitions
+    Base class for Grovy modules definitions
 
-    :cvar source_tree_path: path on context which contains plugin related data
-    :cvar rel_path_schema: relative path to jsonschema for plugin data on context tree
-    :cvar rel_path_groovy: relative path to groovy script which stands begind plugin
+    :cvar source_tree_path: path on context which contains module related data
+    :cvar rel_path_schema: relative path to jsonschema for module data on context tree
+    :cvar rel_path_groovy: relative path to groovy script which stands begind module
     """
     source_tree_path = ''
     rel_path_schema = 'resources/schema.yaml'
@@ -63,11 +63,11 @@ class BaseGroovyPlugin(Plugin):
 
     def check_applicable(self, source, **k):
         """
-        Check whether this plugin should run or not
+        Check whether this module should run or not
 
         This method is a build step.
-        Most of the plugins do require some configuration subtree on config.
-        If there are no required configuration, then plugin could not be applied.
+        Most of the modules do require some configuration subtree on config.
+        If there are no required configuration, then module could not be applied.
 
         :param source: jimmy config
         :type source: dict
@@ -82,7 +82,7 @@ class BaseGroovyPlugin(Plugin):
 
     def setup(self, **kwargs):
         """
-        Setup plugin
+        Setup module
 
         This method is a build step where all required resources are fetched
 
@@ -95,7 +95,7 @@ class BaseGroovyPlugin(Plugin):
         """
         Validates config
 
-        This method is a build step where subtree of config related to plugin is
+        This method is a build step where subtree of config related to module is
         checked against its jsonschema.
 
         :rtype: None

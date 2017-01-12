@@ -93,14 +93,14 @@ definitions:
 
 properties:
 
-  include-default-plugins:
+  include-default-modules:
     description: |
-      Use default set of plugins packaged with Jimmy.
+      Use default set of modules packaged with Jimmy.
     type: boolean
     default: true
 
-  plugin-directories:
-    description: path for searching Jimmy plugins
+  module-directories:
+    description: path for searching Jimmy modules
     type: array
     items:
       type: string

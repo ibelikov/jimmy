@@ -21,16 +21,16 @@ import os
 from pkg_resources import resource_filename
 import sys
 
-from lib.api import Plugin, BaseGroovyPlugin
+from lib.api import Module, BaseGroovyModule
 from lib.common import TreeHelpersMixin, ReadersMixin, LoggerMixin
 
 logger = logging.getLogger(__name__)
 
 
 def load_py_modules(*paths):
-    """:returns: modules from plugins-directory"""
+    """:returns: modules from modules-directory"""
 
-    modules = []
+    py_modules = []
     logger.debug('Loading modules from {}'.format(', '.join(paths)))
     abspaths = [os.path.abspath(path) for path in paths]
 
@@ -43,49 +43,49 @@ def load_py_modules(*paths):
 
                 if os.path.isfile(os.path.join(itempath, '__init__.py')):
                     logger.info("Importing {itempath}".format(**locals()))
-                    modules.append(importlib.import_module(item))
+                    py_modules.append(importlib.import_module(item))
 
                 if itempath.endswith('.py'):
                     logger.info("Importing {itempath}".format(**locals()))
-                    modules.append(importlib.import_module(item[:-3]))
+                    py_modules.append(importlib.import_module(item[:-3]))
         finally:
             sys.path.pop(0)
 
-    return modules
+    return py_modules
 
 
-def extract_plugins(*modules):
-    """:returns: plugins found in imported modules"""
+def extract_jimmy_modules(*py_modules):
+    """:returns: Jimmy modules found in imported .py modules"""
 
-    plugins = []
+    modules = []
 
-    for module in modules:
-        logger.debug('Looking for plugins in module "{}"'.format(module.__name__))
+    for py_module in py_modules:
+        logger.debug('Looking for modules in py_module "{}"'.format(py_module.__name__))
 
-        for itemname in dir(module):
+        for itemname in dir(py_module):
             if itemname.startswith('_'):
                 continue
 
-            item = getattr(module, itemname)
+            item = getattr(py_module, itemname)
 
             if not isinstance(item, type):
                 continue
 
-            if item is Plugin:
+            if item is Module:
                 continue
 
-            if item is BaseGroovyPlugin:
+            if item is BaseGroovyModule:
                 continue
 
-            if issubclass(item, Plugin):
-                logger.info('Found plugin: "{}"'.format(item.__name__))
-                plugins.append(item)
+            if issubclass(item, Module):
+                logger.info('Found module: "{}"'.format(item.__name__))
+                modules.append(item)
 
-    return plugins
+    return modules
 
 
-def load_plugins(*paths):
-    return extract_plugins(*load_py_modules(*paths))
+def load_modules(*paths):
+    return extract_jimmy_modules(*load_py_modules(*paths))
 
 
 class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
@@ -103,7 +103,7 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
         self.env_name = env_name
 
         self.ctx = {
-            'plugins': [],
+            'modules': [],
             'config': {},
             'results': {},
             'env': {}
@@ -118,8 +118,8 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
         return self.ctx['config']
 
     @property
-    def plugins(self):
-        return self.ctx['plugins']
+    def modules(self):
+        return self.ctx['modules']
 
     @property
     def env(self):
@@ -131,7 +131,7 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
         self.read_conf()
         self.build_steps()
         self.set_env()
-        self.load_plugins()
+        self.load_modules()
         self.execute_steps()
 
     def read_conf(self):
@@ -198,26 +198,26 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
         self.logger.debug('Setup env')
         self.ctx['env'].update(self._tree_read(self.config, ['envs', self.env_name], {}))
 
-    def get_default_plugins_path(self):
-        """Get default plugins"""
+    def get_default_modules_path(self):
+        """Get default moduless"""
 
         resource_package = __name__
-        plugins_dir = '../plugins'
-        default_plugins_path = os.path.abspath(resource_filename(resource_package, plugins_dir))
+        modules_dir = '../modules'
+        default_modules_path = os.path.abspath(resource_filename(resource_package, modules_dir))
 
-        return default_plugins_path
+        return default_modules_path
 
-    def load_plugins(self):
-        """Loading plugins"""
+    def load_modules(self):
+        """Loading modules"""
 
-        self.logger.info('Loading Plugins')
-        plugin_paths = self._tree_read(self.config, ['plugin-directories'], [])
-        if self._tree_read(self.config, ['include-default-plugins'], True):
-            plugin_paths.append(self.get_default_plugins_path())
-        self.plugins.extend([p() for p in load_plugins(*plugin_paths)])
+        self.logger.info('Loading Modules')
+        module_paths = self._tree_read(self.config, ['module-directories'], [])
+        if self._tree_read(self.config, ['include-default-modules'], True):
+            module_paths.append(self.get_default_modules_path())
+        self.modules.extend([p() for p in load_modules(*module_paths)])
 
     def execute_steps(self):
-        """Execute pipeline steps and invoke plugins for each step"""
+        """Execute pipeline steps and invoke modules for each step"""
 
         self.logger.debug('Executing pipeline "{}"'.format(self.pipeline_name))
 
@@ -225,8 +225,8 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
             step_name = step['name']
             self.logger.info('Executing step "{}"'.format(step_name))
 
-            for plugin in self.plugins:
-                if hasattr(plugin, step_name) and not plugin.skip:
+            for module in self.modules:
+                if hasattr(module, step_name) and not module.skip:
                     params = self._tree_read(step, ['params'], {})
                     injections = {
                         key: self._tree_read(self.ctx, ctx_path)
@@ -239,9 +239,9 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
                     kwargs.update(params)
                     kwargs.update(injections)
 
-                    self.logger.debug('Invoking plugin "{}"'.format(plugin.__class__.__name__))
+                    self.logger.debug('Invoking module "{}"'.format(module.__class__.__name__))
                     try:
-                        value = getattr(plugin, step_name)(**kwargs)
+                        value = getattr(module, step_name)(**kwargs)
                         if value:
                             self._tree_update(self.ctx, ['results', step_name], value)
                     except StandardError as e:

@@ -76,6 +76,7 @@ config = {
                     'kubernetes/resources/*',
                     'pipeline_libraries/resources/*',
                     'security/resources/*',
+                    'slack/resources/*',
                     'throttle/resources/*'],
     },
     'py_modules': ['jimmy'],

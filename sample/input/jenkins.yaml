@@ -40,7 +40,7 @@ jenkins:
     - scope: system
       username: user4
       description: SSH Username with private key entered directly
-      private_key: !include-relative-text:
+      private_key: !include-text:
         secret/admin.key
     kubernetes:
     - scope: global

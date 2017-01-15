@@ -22,14 +22,14 @@ class Actions {
   def out
 
 
-  void clear_categories() {
+  void clearCategories() {
     ThrottleJobProperty.DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(ThrottleJobProperty.DescriptorImpl.class)
     def categories = descriptor.getCategories()
     categories.clear()
     descriptor.save()
   }
 
-  void create_throttle_category(
+  void makeThrottleCategory(
     String categoryName,
     String maxTotConcBuilds=null,
     String maxTotConcPerNode=null,
@@ -55,7 +55,7 @@ class Actions {
           nodeLabeledPairs.add(new ThrottleJobProperty.NodeLabeledPair(throttleNodeLabelLst.get(i), Integer.parseInt(maxTotConcPerNodeLabeledLst.get(i))))
         }
       } else {
-          throw new IllegalArgumentException("the number of values in throttled_node_label doesn't match with values in max_conc_per_labeled")
+          throw new IllegalArgumentException("the number of values in throttledNodeLabel doesn't match with values in maxConcPerLabeled")
       }
     }
     categories.add(category)

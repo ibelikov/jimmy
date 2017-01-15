@@ -35,7 +35,7 @@ class Security(BaseGroovyModule):
                                  "-s", jenkins_url,
                                  "groovy",
                                  self.groovy_path,
-                                 "set_security_ldap",
+                                 "setSecurityLdap",
                                  data["ldap"]["server"],
                                  data["ldap"]["root_bind"]["dn"],
                                  data["ldap"]["search"]["user_filter"],
@@ -57,7 +57,7 @@ class Security(BaseGroovyModule):
                                  "-s", jenkins_url,
                                  "groovy",
                                  self.groovy_path,
-                                 "set_security_password",
+                                 "setSecurityPassword",
                                  data["cli_user"]["name"],
                                  data["cli_user"]["public_key"],
                                  data["cli_user"]["password"]
@@ -72,7 +72,7 @@ class Security(BaseGroovyModule):
                                  "-s", jenkins_url,
                                  "groovy",
                                  self.groovy_path,
-                                 "set_unsecured"
+                                 "setUnsecured"
                                  ], shell=False)
             except OSError:
                 self.logger.exception('Could not find java')
@@ -99,7 +99,7 @@ class Security(BaseGroovyModule):
                                          "-s", jenkins_url,
                                          "groovy",
                                          self.groovy_path,
-                                         "set_permissions_matrix",
+                                         "setPermissionsMatrix",
                                          name,
                                          ",".join(map(str, permissions)),
                                          email,

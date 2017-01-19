@@ -22,13 +22,27 @@ import hudson.model.View
 import hudson.security.Permission
 import jenkins.model.Jenkins
 import com.cloudbees.plugins.credentials.CredentialsProvider
-import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl
 import hudson.scm.SCM
 
 
 class Actions {
-  Actions(out) { this.out = out }
+  Actions(out) {
+    this.out = out
+
+    GroovyClassLoader loader = new GroovyClassLoader(this.class.getClassLoader())
+    try {
+      gerritTriggerPluginImpl = loader.loadClass("com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl")
+    } catch (ClassNotFoundException ex) {
+      out.println("NOT FOUND: com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl. Gerrit Trigger plugin not installed?")
+    }
+  }
+
   def out
+
+  // Define variables for optional imports
+  //
+  def gerritTriggerPluginImpl
+
 
   // Creates or updates user
   //
@@ -79,30 +93,12 @@ class Actions {
     strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
     makeUpdateUser(ldapuser, email, password, name, pubKeys)
 
-    for (Permission p : Item.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
+    def allPermissions = Permission.getAll()
+
+    for (Permission p : allPermissions) {
+      strategy.add(p,user)
     }
-    for (Permission p : Computer.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-    for (Permission p : Hudson.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-    for (Permission p : Run.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-    for (Permission p : View.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-     for (Permission p : CredentialsProvider.GROUP.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-    for (Permission p : PluginImpl.PERMISSION_GROUP.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
-    for (Permission p : SCM.PERMISSIONS.getPermissions()) {
-      strategy.add(p,ldapuser)
-    }
+
     realm = new hudson.security.LDAPSecurityRealm(
       server, rootDN, userSearchBase, userSearch, groupSearchBase, managerDN, managerPassword, inhibitInferRootDN.toBoolean()
     )
@@ -131,30 +127,14 @@ class Actions {
     strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
 
     makeUpdateUser(user, email, password, name, pubKeys)
-    for (Permission p : Item.PERMISSIONS.getPermissions()) {
+
+    def allPermissions = Permission.getAll()
+
+    for (Permission p : allPermissions) {
       strategy.add(p,user)
     }
-    for (Permission p : Computer.PERMISSIONS.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : Hudson.PERMISSIONS.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : Run.PERMISSIONS.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : View.PERMISSIONS.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : CredentialsProvider.GROUP.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : PluginImpl.PERMISSION_GROUP.getPermissions()) {
-      strategy.add(p,user)
-    }
-    for (Permission p : SCM.PERMISSIONS.getPermissions()) {
-      strategy.add(p,user)
-    }
+
+
     if (instance.getSecurityRealm() instanceof hudson.security.HudsonPrivateSecurityRealm) {
       realm = instance.getSecurityRealm()
     } else {
@@ -215,16 +195,18 @@ class Actions {
         strategy.add(p,user)
       }
     }
-    if (perms.contains("gerrit")) {
-      for (Permission p : PluginImpl.PERMISSION_GROUP.getPermissions()) {
-        strategy.add(p,user)
-      }
-    }
     if (perms.contains("scm")) {
       for (Permission p : SCM.PERMISSIONS.getPermissions()) {
         strategy.add(p,user)
       }
     }
+
+    if (perms.contains("gerrit")) {
+      for (Permission p : gerritTriggerPluginImpl.PERMISSION_GROUP.getPermissions()) {
+        strategy.add(p,user)
+      }
+    }
+
     instance.setAuthorizationStrategy(strategy)
     instance.save()
   }

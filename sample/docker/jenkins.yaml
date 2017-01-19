@@ -1,0 +1,108 @@
+jenkins:
+  artifactory:
+    build_info_proxy:
+      port: 9876
+    servers:
+    - id: artifactory
+      url: http://example.com/artifactory
+      deployer_credentials_id: deployer-credentials
+      resolver_credentials_id: resolver-credentials
+      timeout: 600
+    - id: artifactory-dev
+      url: http://example.com/artifactory-dev
+      deployer_credentials_id: deployer-dev-credentials
+
+  configuration:
+    admin_email: CI <admin@example.com>
+    agent_tcp_port: 50000
+    location_url: http://localhost:8080
+    markup_format: raw-html
+    num_of_executors: 2
+    scm_checkout_retry_count: 1
+
+  credentials:
+    password:
+    - scope: global
+      username: user
+      password: password
+      id: passord-credentials
+      description: test username/password user
+    token:
+    - scope: global
+      username: service-user
+      description: username/api token pair for 'service-user'
+      id: service-user-token
+
+  gearman:
+    enable: true
+    host: zuul01-test.example.com
+    port: 4730
+
+  gerrit:
+    servers:
+    - servername: test-gerrit-name
+      hostname: test-hostname
+      username: test-username
+      url: http://test.com
+      auth_key: /var/lib/jenkins/.ssh/id_rsa
+    - servername: test-gerrit-name2
+      hostname: test-hostname2
+      username: test-username2
+      url: http://test.com2
+      auth_key: /var/lib/jenkins/.ssh/id_rsa
+
+  git:
+    user:
+      email: jenkins@example.com
+      name: Jenkins
+
+  http_request:
+    basic_auth:
+    - key_name: auth-id
+      username: user
+      password: secret
+    - key_name: auth-id2
+      username: user2
+      password: secret2
+
+  pipeline_libraries:
+    libraries:
+    - name: shared-lib
+      git_url: https://github.com/example/shared-lib
+      git_branch: master
+      default_version: release-0.1
+      load_implicitly: true
+      allow_version_override: false
+    - name: shared-lib-dev
+      git_url: https://github.com/example/shared-lib-dev
+      git_branch: master
+      default_version: master
+      load_implicitly: false
+      allow_version_override: true
+
+  security:
+    password:
+      access:
+      - name: admin
+        email: jenkins@example.com
+        password: password
+        permissions:
+        - overall
+    cli_user:
+      name: admin
+      public_key: !include-text:
+        /var/jenkins_home/.ssh/id_rsa.pub
+
+  throttle:
+    categories:
+    - category_name: category1
+      max_total_concurrent_builds: 1
+      max_concurrent_builds_per_node: 0
+      max_per_labeled_node:
+      - throttled_node_label: slave-label1
+        max_concurrent_per_labeled: 1
+      - throttled_node_label: slave-label2
+        max_concurrent_per_labeled: 1
+    - category_name: category2
+      max_total_concurrent_builds: 1
+      max_concurrent_builds_per_node: 0

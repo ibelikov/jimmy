@@ -16,10 +16,6 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-PROJECT = 'jimmy'
-
-VERSION = '0.2'
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -29,14 +25,13 @@ config = {
     'name': 'jimmy',
     'version': '0.2',
 
-    'author': 'Mirantis',
-    'author_email': 'infra@mirantis.com',
+    'author': 'CI Team',
 
     'description': 'Update jenkins configuration using YAML',
 
-    'url': 'https://github.com/fuel-infra/jimmy',
+    'url': 'https://github.com/ci-team/jimmy',
 
-    'download_url': 'https://github.com/fuel-infra/jimmy',
+    'download_url': 'https://github.com/ci-team/jimmy',
 
     'classifiers': [
         'Development Status :: 5 - Production/Stable',
@@ -65,21 +60,9 @@ config = {
 
     'packages': find_packages(),
     'package_data': {
-        'lib': ['schema.yaml'],
-        'modules': ['artifactory/resources/*',
-                    'credentials/resources/*',
-                    'git/resources/*',
-                    'gerrit/resources/*',
-                    'gearman/resources/*',
-                    'http_request/resources/*',
-                    'jenkins_configuration/resources/*',
-                    'kubernetes/resources/*',
-                    'pipeline_libraries/resources/*',
-                    'security/resources/*',
-                    'slack/resources/*',
-                    'throttle/resources/*'],
+        'jimmy': ['lib/schema.yaml',
+                  'modules/*/resources/*']
     },
-    'py_modules': ['jimmy'],
     'entry_points': {
         'console_scripts': [
             'jimmy = jimmy:cli',

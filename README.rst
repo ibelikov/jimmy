@@ -15,8 +15,7 @@ How to use
 
 #. Clone Jimmy repo::
 
-     $ git clone https://review.fuel-infra.org/fuel-infra/jimmy
-     $ cd jimmy
+     $ git clone https://github.com/ci-team/jimmy
 
 #. Setup venv::
 
@@ -24,9 +23,9 @@ How to use
      $ cd work_folder && virtualenv venv
      $ source venv/bin/activate
 
-#. Install the required python packages using pip::
+#. Install Jimmy::
 
-     $ pip install -r requirements.txt
+     $ pip install ./jimmy
 
 
 #. Create YAML file `my_jenkins.yaml` with jenkins parameters. Check
@@ -41,4 +40,4 @@ How to use
 
 #. Run::
 
-     $ python jimmy.py --conf-path jimmy.yaml -e my_jenkins
+     $ jimmy -c jimmy.yaml -e my_jenkins

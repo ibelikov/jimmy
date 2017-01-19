@@ -25,14 +25,13 @@ config = {
     'name': 'jimmy',
     'version': '0.2',
 
-    'author': 'Mirantis',
-    'author_email': 'infra@mirantis.com',
+    'author': 'CI Team',
 
     'description': 'Update jenkins configuration using YAML',
 
-    'url': 'https://github.com/fuel-infra/jimmy',
+    'url': 'https://github.com/ci-team/jimmy',
 
-    'download_url': 'https://github.com/fuel-infra/jimmy',
+    'download_url': 'https://github.com/ci-team/jimmy',
 
     'classifiers': [
         'Development Status :: 5 - Production/Stable',
@@ -62,18 +61,7 @@ config = {
     'packages': find_packages(),
     'package_data': {
         'jimmy': ['lib/schema.yaml',
-                  'modules/artifactory/resources/*',
-                  'modules/credentials/resources/*',
-                  'modules/git/resources/*',
-                  'modules/gerrit/resources/*',
-                  'modules/gearman/resources/*',
-                  'modules/http_request/resources/*',
-                  'modules/jenkins_configuration/resources/*',
-                  'modules/kubernetes/resources/*',
-                  'modules/pipeline_libraries/resources/*',
-                  'modules/security/resources/*',
-                  'modules/slack/resources/*',
-                  'modules/throttle/resources/*'],
+                  'modules/*/resources/*']
     },
     'entry_points': {
         'console_scripts': [

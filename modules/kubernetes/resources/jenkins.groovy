@@ -41,7 +41,7 @@ class Actions {
 
   public Map kubeParams = JSONObject.fromObject(kubeInput)
 
-  private createContainerTemplate(Map containerParams) {
+  private makeContainerTemplate(Map containerParams) {
     // Container Env Variables
     ArrayList<ContainerEnvVar> envVars = new ArrayList<ContainerEnvVar>()
     for (Map vars : containerParams['env_vars'] ?: []) {
@@ -70,7 +70,7 @@ class Actions {
     return podContainer
   }
 
-  private createVolume(Map volumeParams, String type) {
+  private makeVolume(Map volumeParams, String type) {
     def volume
     switch (type) {
       case 'config_map':
@@ -106,11 +106,11 @@ class Actions {
   }
 
 
-  private createPodTemplate(Map podParams) {
+  private makePodTemplate(Map podParams) {
     // add Container templates
     ArrayList<ContainerTemplate> containers = new ArrayList<ContainerTemplate>()
     for (Map container : podParams['containers'] ?: []) {
-      containers.add(createContainerTemplate(container))
+      containers.add(makeContainerTemplate(container))
     }
 
     // add ImagePullSecrets
@@ -140,7 +140,7 @@ class Actions {
     def volumes = podParams['volumes'] ?: []
     for (String volumeType : volumeTypes) {
       for (Map volume : volumes[volumeType] ?: []) {
-        podVolumes.add(createVolume(volume, volumeType))
+        podVolumes.add(makeVolume(volume, volumeType))
       }
     }
 
@@ -167,7 +167,7 @@ class Actions {
     // process Pod Templates
     ArrayList<PodTemplate> podTemplates = new ArrayList<PodTemplate>()
     for (Map podTemplate : kubeParams['pod_templates'] ?: []) {
-      podTemplates.add(createPodTemplate(podTemplate))
+      podTemplates.add(makePodTemplate(podTemplate))
     }
 
     // create KubernetesCloud

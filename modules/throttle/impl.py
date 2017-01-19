@@ -29,7 +29,7 @@ class ThrottleConcurrentModule(BaseGroovyModule):
                              "-s", jenkins_url,
                              "groovy",
                              self.groovy_path,
-                             "clear_categories",
+                             "clearCategories",
                              ], shell=False)
         except OSError:
             self.logger.exception('Could not find java')
@@ -54,7 +54,7 @@ class ThrottleConcurrentModule(BaseGroovyModule):
                                  "-s", jenkins_url,
                                  "groovy",
                                  self.groovy_path,
-                                 "create_throttle_category",
+                                 "makeThrottleCategory",
                                  p["category_name"],
                                  str(p["max_total_concurrent_builds"]),
                                  str(p["max_concurrent_builds_per_node"]),

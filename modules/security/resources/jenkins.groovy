@@ -32,29 +32,29 @@ class Actions {
 
   // Creates or updates user
   //
-  void create_update_user(String user, String email=null, String passwd=null, String name=null, String pub_keys=null) {
-    def set_user = hudson.model.User.get(user)
+  void makeUpdateUser(String user, String email=null, String passwd=null, String name=null, String pubKeys=null) {
+    def setUser = hudson.model.User.get(user)
     if (name != null && name !="") {
-      set_user.setFullName(name)
+      setUser.setFullName(name)
     }
     if (email != null && email !="") {
-      def email_property = new hudson.tasks.Mailer.UserProperty(email)
-      set_user.addProperty(email_property)
+      def emailProperty = new hudson.tasks.Mailer.UserProperty(email)
+      setUser.addProperty(emailProperty)
     }
     if (passwd != null && passwd !="") {
-      def pw_details = hudson.security.HudsonPrivateSecurityRealm.Details.fromPlainPassword(passwd)
-      set_user.addProperty(pw_details)
+      def pwDetails = hudson.security.HudsonPrivateSecurityRealm.Details.fromPlainPassword(passwd)
+      setUser.addProperty(pwDetails)
     }
-    if (pub_keys != null && pub_keys !="") {
-      def ssh_keys_property = new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl(pub_keys)
-      set_user.addProperty(ssh_keys_property)
+    if (pubKeys != null && pubKeys !="") {
+      def sshKeysProperty = new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl(pubKeys)
+      setUser.addProperty(sshKeysProperty)
     }
-    set_user.save()
+    setUser.save()
   }
 
   // Sets up security for the Jenkins Master instance.
   //
-  void set_security_ldap(
+  void setSecurityLdap(
     String server=null,
     String rootDN=null,
     String userSearch=null,
@@ -64,7 +64,7 @@ class Actions {
     String managerDN=null,
     String managerPassword=null,
     String ldapuser,
-    String pub_keys=null,
+    String pubKeys=null,
     String email="",
     String password="",
     String name=""
@@ -77,7 +77,7 @@ class Actions {
     def strategy
     def realm
     strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
-    create_update_user(ldapuser, email, password, name, pub_keys)
+    makeUpdateUser(ldapuser, email, password, name, pubKeys)
 
     for (Permission p : Item.PERMISSIONS.getPermissions()) {
       strategy.add(p,ldapuser)
@@ -113,7 +113,7 @@ class Actions {
     instance.save()
   }
 
-  void set_unsecured() {
+  void setUnsecured() {
     def instance = Jenkins.getInstance()
     def strategy
     def realm
@@ -124,13 +124,13 @@ class Actions {
     instance.save()
   }
 
-  void set_security_password(String user, String pub_keys=null, String password=null, String email=null, String name=null) {
+  void setSecurityPassword(String user, String pubKeys=null, String password=null, String email=null, String name=null) {
     def instance = Jenkins.getInstance()
     def strategy
     def realm
     strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
 
-    create_update_user(user, email, password, name, pub_keys)
+    makeUpdateUser(user, email, password, name, pubKeys)
     for (Permission p : Item.PERMISSIONS.getPermissions()) {
       strategy.add(p,user)
     }
@@ -167,22 +167,22 @@ class Actions {
     instance.save()
   }
 
-  void set_permissions_matrix(
+  void setPermissionsMatrix(
     String user,
     String permissions,
     String email=null,
     String password=null,
     String name=null,
-    String pub_keys=null,
-    String security_model
+    String pubKeys=null,
+    String securityModel
   ) {
     def instance = Jenkins.getInstance()
     def strategy
     strategy = instance.getAuthorizationStrategy()
     List perms = permissions.split(',')
 
-    if (security_model == 'password') {
-      create_update_user(user, email, password, name, pub_keys)
+    if (securityModel == 'password') {
+      makeUpdateUser(user, email, password, name, pubKeys)
     }
 
     if (perms.contains("job")) {

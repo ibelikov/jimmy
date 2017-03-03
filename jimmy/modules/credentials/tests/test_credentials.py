@@ -65,6 +65,11 @@ class TestCredentialsModule(base.TestCase):
                                       '      username: user2',
                                       '      private_key: /home/user/.ssh/id_rsa',
                                       '      id: this-is-an-id',
+                                      '    file:',
+                                      '    - scope: global',
+                                      '      id: secret-key',
+                                      '      file: /home/user/secret_key',
+                                      '      description: Secret key',
                                       '    kubernetes:',
                                       '    - id: kubernetes-credentials',
                                       '      scope: global',
@@ -93,6 +98,7 @@ class TestCredentialsModule(base.TestCase):
                        "'passwd'",
                        "'test username/password user'",
                        "''",
+                       "''",
                        "''"],
                       shell=False),
                  call(['java',
@@ -105,7 +111,21 @@ class TestCredentialsModule(base.TestCase):
                        "''",
                        "''",
                        "'/home/user/.ssh/id_rsa'",
+                       "''",
                        "'this-is-an-id'"],
+                      shell=False),
+                 call(['java',
+                       '-jar', '<< path to jenkins-cli.jar >>',
+                       '-s', 'http://localhost:8080', 'groovy',
+                       modules_dir + '/' + 'credentials/resources/jenkins.groovy',
+                       'updateCredentials',
+                       "'global'",
+                       "''",
+                       "''",
+                       "'Secret key'",
+                       "''",
+                       "'/home/user/secret_key'",
+                       "'secret-key'"],
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
@@ -126,10 +146,11 @@ class TestCredentialsModule(base.TestCase):
                        "''",
                        "'test token credentials'",
                        "''",
+                       "''",
                        "'user-token'"],
                       shell=False)]
         mock_subp.assert_has_calls(calls, any_order=True)
-        assert 4 == mock_subp.call_count, "subprocess call should be equal to 4"
+        assert 5 == mock_subp.call_count, "subprocess call should be equal to 5"
 
 
 class TestCredentialsSchema(object):
@@ -188,6 +209,19 @@ class TestCredentialsSchema(object):
         repo_data = yaml_reader.read(jenkins_yaml_path)
         jsonschema.validate(repo_data, self.schema)
 
+    def test_valid_oneof_file_data(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - scope: global',
+              '      id: secret-key',
+              '      file: /home/user/secret_key',
+              '      description: Secret key'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        jsonschema.validate(repo_data, self.schema)
+
     def test_valid_oneof_token_data(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
             [
@@ -224,6 +258,20 @@ class TestCredentialsSchema(object):
               '      username: user2',
               '      private_key: /home/user/.ssh/id_rsa',
               '      id: this-is-credentials-id'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "'test' is not one of ['global', 'system']"
+
+    def test_file_validation_fail_if_scope_is_not_enum(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - scope: test',
+              '      id: secret-key',
+              '      file: /home/user/secret_key',
             ])
         })
         repo_data = yaml_reader.read(jenkins_yaml_path)
@@ -338,6 +386,21 @@ class TestCredentialsSchema(object):
             jsonschema.validate(repo_data, self.schema)
         assert excinfo.value.message == "123 is not of type 'string'"
 
+    def test_validation_fail_if_file_is_not_string(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - scope: global',
+              '      id: secret-key',
+              '      file: 123',
+              '      description: Secret key'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "123 is not of type 'string'"
+
     def test_password_validation_fail_for_scope_required_property(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
             [
@@ -419,6 +482,32 @@ class TestCredentialsSchema(object):
             jsonschema.validate(repo_data, self.schema)
         assert excinfo.value.message == "'private_key' is a required property"
 
+    def test_file_validation_fail_for_scope_required_property(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - id: secret-key',
+              '      file: /home/user/secret_key'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "'scope' is a required property"
+
+    def test_file_validation_fail_for_file_required_property(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - scope: global',
+              '      id: secret-key'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "'file' is a required property"
+
     def test_token_validation_fail_for_scope_required_property(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
             [
@@ -483,6 +572,17 @@ class TestCredentialsSchema(object):
             jsonschema.validate(repo_data, self.schema)
         assert excinfo.value.message == "123 is not of type 'array'"
 
+    def test_validation_fail_if_file_not_array(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              'file: 123'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "123 is not of type 'array'"
+
     def test_validation_fail_if_token_not_array(self):
         self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
             [
@@ -517,6 +617,21 @@ class TestCredentialsSchema(object):
               '    - scope: global',
               '      username: user2',
               '      private_key: /home/user/.ssh/id_rsa',
+              '      test: test'
+            ])
+        })
+        repo_data = yaml_reader.read(jenkins_yaml_path)
+        with pytest.raises(jsonschema.ValidationError) as excinfo:
+            jsonschema.validate(repo_data, self.schema)
+        assert excinfo.value.message == "Additional properties are not allowed ('test' was unexpected)"
+
+    def test_validation_fail_for_file_additional_properties(self):
+        self.mfs.add_entries({jenkins_yaml_path: '\n'.join(
+            [
+              '    file:',
+              '    - scope: global',
+              '      id: secret-key',
+              '      file: /home/user/secret_file',
               '      test: test'
             ])
         })

@@ -38,6 +38,7 @@ class Credentials(BaseGroovyModule):
                                      "'{0}'".format(p["password"]),
                                      "'{0}'".format(description),
                                      "''",  # place for a private_key
+                                     "''",  # place for a secret file
                                      "'{0}'".format(cred_id)
                                      ], shell=False)
                 except OSError:
@@ -60,6 +61,30 @@ class Credentials(BaseGroovyModule):
                                      "'{0}'".format(passphrase),
                                      "'{0}'".format(description),
                                      "'{0}'".format(s["private_key"]),
+                                     "''",  # place for a secret file
+                                     "'{0}'".format(cred_id)
+                                     ], shell=False)
+                except OSError:
+                    self.logger.exception('Could not find java')
+
+        if "file" in data:
+            for f in data["file"]:
+                cred_id = f.get("id", "")
+                file_path = f.get("file", "")
+                description = f.get("description", "")
+                try:
+                    subprocess.call(["java",
+                                     "-jar", jenkins_cli_path,
+                                     "-s", jenkins_url,
+                                     "groovy",
+                                     self.groovy_path,
+                                     "updateCredentials",
+                                     "'{0}'".format(f["scope"]),  # jenkins-cli bug workaround
+                                     "''",  # place for an user
+                                     "''",  # place for a password
+                                     "'{0}'".format(description),
+                                     "''",  # place for a private_key
+                                     "'{0}'".format(file_path),
                                      "'{0}'".format(cred_id)
                                      ], shell=False)
                 except OSError:
@@ -101,6 +126,7 @@ class Credentials(BaseGroovyModule):
                                      "''",  # empty filler for a password
                                      "'{0}'".format(description),
                                      "''",  # empty filler for a private_key
+                                     "''",  # place for a secret file
                                      "'{0}'".format(t["id"])
                                      ], shell=False)
                 except OSError:

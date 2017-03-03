@@ -23,11 +23,25 @@ import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials
 import com.cloudbees.plugins.credentials.domains.Domain
 import com.cloudbees.plugins.credentials.domains.SchemeRequirement
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl
+import com.cloudbees.plugins.credentials.SecretBytes
 import hudson.model.User
 
 class Actions {
-  Actions(out) { this.out = out }
+  Actions(out) {
+    this.out = out
+
+    GroovyClassLoader loader = new GroovyClassLoader(this.class.getClassLoader())
+    try {
+      plaincredentials = loader.loadClass("org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl")
+    } catch (ClassNotFoundException ex) {
+      out.println("NOT FOUND: org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl. Plain Credentials plugin not installed?")
+    }
+  }
+
   def out
+
+  // variable for defining optional import
+  def plaincredentials
 
 
   private credentialsForUser(String id, String username) {
@@ -56,6 +70,7 @@ class Actions {
                          String password="",
                          String description="",
                          String privateKey="",
+                         String filePath="",
                          String id="") {
 
     //removing '' quotes, jenkins cli bug workaround
@@ -64,6 +79,7 @@ class Actions {
     password = password.replaceAll('^\'|\'$', '')
     description = description.replaceAll('^\'|\'$', '')
     privateKey = privateKey.replaceAll('^\'|\'$', '')
+    filePath = filePath.replaceAll('^\'|\'$', '')
     id = id.replaceAll('^\'|\'$', '')
 
     def globalDomain = Domain.global()
@@ -79,13 +95,13 @@ class Actions {
       credsScope = CredentialsScope.SYSTEM
     }
 
-    if (password == "") {
+    if (password == "" && filePath == "") {
       User userId = User.get(username)
       password = userId.getProperty(jenkins.security.ApiTokenProperty.class).getApiToken()
     }
 
     def credentials
-    if (privateKey == "") {
+    if (privateKey == "" && filePath == "") {
       credentials = new UsernamePasswordCredentialsImpl(
         credsScope,
         id,
@@ -93,6 +109,20 @@ class Actions {
         username,
         password
       )
+    } else if (filePath != "") {
+      def file = new File(filePath)
+      def secretBytes = SecretBytes.fromString(file.text)
+      try {
+        credentials = plaincredentials.newInstance(
+          credsScope,
+          id,
+          description,
+          file.getName(),
+          secretBytes
+        )
+      } catch (ClassNotFoundException ex) {
+        throw new ClassNotFoundException(ex)
+      }
     } else {
       def keySource
       if (privateKey.startsWith('-----BEGIN')) {

@@ -1,13 +1,19 @@
 language: python
 dist: trusty
-python:
-  - "2.7"
-before_install:
-  - sudo apt-get install gradle
-install:
-  - pip install tox
+matrix:
+  include:
+    - python: '2.7'
+      env: RUNTESTS="tox -v"
+      install: pip install tox
+    - python: '3.5'
+      env: RUNTESTS="tox -v"
+      install: pip install tox
+    - env: RUNTESTS="gradle check"
+      addons:
+        apt:
+          packages:
+            - gradle
+      after_failure:
+        - cat build/reports/codenarc/main.txt
 script:
-  - tox -v
-  - gradle check
-after_failure:
-  - cat build/reports/codenarc/main.txt
+  - bash -c "$RUNTESTS"

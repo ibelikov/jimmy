@@ -18,7 +18,6 @@ import logging
 
 import click
 
-from jimmy.lib.common import LOG_LEVELS
 from jimmy.lib.common import LOG_LEVELS_NAMES_LOWER
 from jimmy.lib.core import Runner
 
@@ -44,5 +43,5 @@ logger = logging.getLogger()
     type=click.STRING)
 def cli(log_level, conf_path, env_name, pipeline_name):
     logging.basicConfig()
-    logger.setLevel(LOG_LEVELS[log_level.upper()])
+    logger.setLevel(log_level.upper())
     Runner(conf_path, pipeline_name, env_name).run()

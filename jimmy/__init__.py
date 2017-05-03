@@ -1,1 +1,1 @@
-from jimmyctl import cli
+from .jimmyctl import cli

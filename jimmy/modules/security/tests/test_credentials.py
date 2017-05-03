@@ -82,8 +82,7 @@ class TestSecurityModuel(base.TestCase):
         sys.path.pop(0)
         mock_modules.return_value = [security, read_source]
         os.chdir(jimmy_dir)
-        result = self.runner.invoke(cli)
-        print result.output
+        self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
                        '-s', 'http://localhost:8080', 'groovy',

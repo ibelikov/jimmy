@@ -15,7 +15,7 @@
 #  under the License.
 
 import os
-from common import TreeHelpersMixin, ReadersMixin, LoggerMixin
+from .common import TreeHelpersMixin, ReadersMixin, LoggerMixin
 
 
 class Module(TreeHelpersMixin, ReadersMixin, LoggerMixin):

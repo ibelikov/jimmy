@@ -14,8 +14,9 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-from ConfigParser import RawConfigParser
 from copy import copy
+from io import IOBase
+from six.moves.configparser import ConfigParser
 import jsonschema
 import os
 import logging
@@ -27,11 +28,8 @@ logger = logging.getLogger(__name__)
 # --- logging ---
 
 # noinspection PyProtectedMember
-LOG_LEVELS = {
-    k: v
-    for k, v in logging._levelNames.iteritems()
-    if not isinstance(k, int)}
-LOG_LEVELS_NAMES_LOWER = [ll.lower() for ll in LOG_LEVELS.keys()]
+LOG_LEVELS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+LOG_LEVELS_NAMES_LOWER = [ll.lower() for ll in LOG_LEVELS]
 
 
 # --- Mixins for logger, readers, tree helpers ---
@@ -70,7 +68,7 @@ class ReadersMixin(object):
 class TreeHelpersMixin(object):
     @staticmethod
     def _tree_read(src, path, default=None):
-        if isinstance(path, basestring):
+        if isinstance(path, str):
             path = path.split('.')
 
         for part in path:
@@ -83,7 +81,7 @@ class TreeHelpersMixin(object):
 
     @staticmethod
     def _tree_write(dst, path, value):
-        if isinstance(path, basestring):
+        if isinstance(path, str):
             path = path.split('.')
         else:
             path = copy(path)
@@ -97,7 +95,7 @@ class TreeHelpersMixin(object):
 
     @staticmethod
     def _tree_check(src, path):
-        if isinstance(path, basestring):
+        if isinstance(path, str):
             path = path.split('.')
             intype = 'str'
         else:
@@ -134,7 +132,7 @@ class YamlWithImportsLoader(yaml.Loader):
 
         if 'root' in kwargs:
             self.root = kwargs['root']
-        elif isinstance(self.stream, file):
+        elif isinstance(self.stream, IOBase):
             self.root = os.path.dirname(self.stream.name)
         else:
             self.root = os.path.curdir
@@ -216,7 +214,7 @@ class ConfReader(ReadersMixin, LoggerMixin):
         path_to_file = os.path.abspath(path_to_file)
         self.logger.info('Reading config file "{}"'.format(path_to_file))
         assert os.path.exists(path_to_file)
-        parser = RawConfigParser(allow_no_value=True)
+        parser = ConfigParser(interpolation=None, allow_no_value=True)
         parser.read(path_to_file)
 
         output = {

@@ -38,6 +38,8 @@ config = {
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: Unix',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
      ],
 
     'platforms': ['Unix'],
@@ -50,11 +52,11 @@ config = {
 
     'install_requires': [
         'click',
-        'functools32',
         'jsonschema',
         'MarkupSafe',
         'pyaml',
         'PyYAML',
+        'six',
         'wheel'
     ],
 

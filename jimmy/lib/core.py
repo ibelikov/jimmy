@@ -19,10 +19,11 @@ from itertools import chain
 import logging
 import os
 from pkg_resources import resource_filename
+from six import iteritems
 import sys
 
-from api import Module, BaseGroovyModule
-from common import TreeHelpersMixin, ReadersMixin, LoggerMixin
+from .api import Module, BaseGroovyModule
+from .common import TreeHelpersMixin, ReadersMixin, LoggerMixin
 
 logger = logging.getLogger(__name__)
 
@@ -166,19 +167,19 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
 
             inject = {}
             for k, v in chain(
-                    self._tree_read(config, ['defaults', 'inject'], {}).iteritems(),
-                    self._tree_read(config, ['defaults', 'inject', step_name], {}).iteritems(),
-                    self._tree_read(pipeline, ['inject'], {}).iteritems(),
-                    self._tree_read(step, ['inject'], {}).iteritems()
+                    iteritems(self._tree_read(config, ['defaults', 'inject'], {})),
+                    iteritems(self._tree_read(config, ['defaults', 'inject', step_name], {})),
+                    iteritems(self._tree_read(pipeline, ['inject'], {})),
+                    iteritems(self._tree_read(step, ['inject'], {}))
             ):
                 inject[k] = v
 
             params = {}
             for k, v in chain(
-                    self._tree_read(config, ['defaults', 'params'], {}).iteritems(),
-                    self._tree_read(config, ['defaults', 'params', step_name], {}).iteritems(),
-                    self._tree_read(pipeline, ['params'], {}).iteritems(),
-                    self._tree_read(step, ['params'], {}).iteritems()
+                    iteritems(self._tree_read(config, ['defaults', 'params'], {})),
+                    iteritems(self._tree_read(config, ['defaults', 'params', step_name], {})),
+                    iteritems(self._tree_read(pipeline, ['params'], {})),
+                    iteritems(self._tree_read(step, ['params'], {}))
             ):
                 if k not in inject:
                     params[k] = v
@@ -231,7 +232,7 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
                     injections = {
                         key: self._tree_read(self.ctx, ctx_path)
                         for key, ctx_path
-                        in self._tree_read(step, ['inject'], {}).iteritems()
+                        in iteritems(self._tree_read(step, ['inject'], {}))
                     }
 
                     kwargs = {}
@@ -244,6 +245,6 @@ class Runner(TreeHelpersMixin, ReadersMixin, LoggerMixin):
                         value = getattr(module, step_name)(**kwargs)
                         if value:
                             self._tree_update(self.ctx, ['results', step_name], value)
-                    except StandardError as e:
+                    except Exception as e:
                         self.logger.error(e)
                         raise

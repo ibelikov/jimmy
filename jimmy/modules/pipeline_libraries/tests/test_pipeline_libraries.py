@@ -101,7 +101,6 @@ class TestPipelineLibrariesModule(base.TestCase):
                        'False',
                        'True'],
                       shell=False)]
-        print calls
         mock_subp.assert_has_calls(calls, any_order=True)
         assert 2 == mock_subp.call_count, "subprocess call should be equal to 2"
 

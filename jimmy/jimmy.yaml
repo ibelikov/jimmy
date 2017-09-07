@@ -8,7 +8,7 @@ include-default-modules: true
 
 defaults:
   inject:
-    jenkins_cli_path: /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar
+    jenkins_cli_path: /var/jenkins_home/war/WEB-INF/jenkins-cli.jar
 
 setup:
   - name: setup
@@ -51,10 +51,16 @@ pipelines:
       inject:
         source: results.build_source.source
         jenkins_url: env.jenkins_url
+        jenkins_cli_mode: env.jenkins_cli_mode
         jenkins_cli_path: config.defaults.inject.jenkins_cli_path
 
 
 envs:
   main:
+    jenkins_cli_mode: -remoting
     jenkins_url: http://localhost:8080
     jenkins_config_path: sample/input/jenkins.yaml
+  docker:
+    jenkins_cli_mode: -remoting
+    jenkins_url: http://localhost:8080
+    jenkins_config_path: /etc/jimmy/jenkins.yaml

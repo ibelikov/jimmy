@@ -66,7 +66,7 @@ class TestSlackModule(base.TestCase):
         mock_subp.assert_called_with(
             ['java',
              '-jar', '<< path to jenkins-cli.jar >>',
-             '-s', 'http://localhost:8080',
+             '-s', 'http://localhost:8080', '-remoting',
              'groovy',
              modules_dir + '/' + 'slack/resources/jenkins.groovy',
              'setSlackConfig',

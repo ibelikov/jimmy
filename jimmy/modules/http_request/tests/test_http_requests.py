@@ -73,7 +73,7 @@ class TestHttpRequestModule(base.TestCase):
         self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'http_request/resources/jenkins.groovy',
                        'setBasicDigestAuth',
                        'testauth',
@@ -82,7 +82,7 @@ class TestHttpRequestModule(base.TestCase):
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'http_request/resources/jenkins.groovy',
                        'setBasicDigestAuth',
                        'testauth2',

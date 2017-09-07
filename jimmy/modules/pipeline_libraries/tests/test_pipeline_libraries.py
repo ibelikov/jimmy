@@ -79,7 +79,7 @@ class TestPipelineLibrariesModule(base.TestCase):
         self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'pipeline_libraries/resources/jenkins.groovy',
                        'set_global_library',
                        'shared-lib',
@@ -91,7 +91,7 @@ class TestPipelineLibrariesModule(base.TestCase):
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'pipeline_libraries/resources/jenkins.groovy',
                        'set_global_library',
                        'shared-lib-dev',

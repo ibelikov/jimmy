@@ -77,7 +77,7 @@ class TestGerritModule(base.TestCase):
         self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'gerrit/resources/jenkins.groovy',
                        "'test-hostname2'",
                        "'/var/lib/jenkins/.ssh/id_rsa2'",
@@ -87,7 +87,7 @@ class TestGerritModule(base.TestCase):
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'gerrit/resources/jenkins.groovy',
                        "'test-hostname'",
                        "'/var/lib/jenkins/.ssh/id_rsa'",

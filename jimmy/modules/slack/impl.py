@@ -19,12 +19,12 @@ from jimmy.lib.api import BaseGroovyModule
 class Slack(BaseGroovyModule):
     source_tree_path = 'jenkins.slack'
 
-    def update_dest(self, source, jenkins_url, jenkins_cli_path, **kwargs):
+    def update_dest(self, source, jenkins_url, jenkins_cli_path, jenkins_cli_mode, **kwargs):
         data = self._tree_read(source, self.source_tree_path)
         try:
             subprocess.call(["java",
                              "-jar", jenkins_cli_path,
-                             "-s", jenkins_url,
+                             "-s", jenkins_url, jenkins_cli_mode,
                              "groovy",
                              self.groovy_path,
                              "setSlackConfig",

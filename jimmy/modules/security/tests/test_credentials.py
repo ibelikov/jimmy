@@ -86,7 +86,7 @@ class TestSecurityModuel(base.TestCase):
         print result.output
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'security/resources/jenkins.groovy',
                        'setSecurityLdap',
                        'ldap://mirantis.com:3268',
@@ -102,7 +102,7 @@ class TestSecurityModuel(base.TestCase):
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'security/resources/jenkins.groovy',
                        'setPermissionsMatrix',
                        'amihura',
@@ -153,7 +153,7 @@ class TestSecurityModuel(base.TestCase):
         self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'security/resources/jenkins.groovy',
                        'setSecurityPassword',
                        'jenkins-manager',
@@ -162,7 +162,7 @@ class TestSecurityModuel(base.TestCase):
                       shell=False),
                  call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'security/resources/jenkins.groovy',
                        'setPermissionsMatrix',
                        'amihura',
@@ -201,7 +201,7 @@ class TestSecurityModuel(base.TestCase):
         self.runner.invoke(cli)
         calls = [call(['java',
                        '-jar', '<< path to jenkins-cli.jar >>',
-                       '-s', 'http://localhost:8080', 'groovy',
+                       '-s', 'http://localhost:8080', '-remoting', 'groovy',
                        modules_dir + '/' + 'security/resources/jenkins.groovy',
                        'setUnsecured'],
                       shell=False)]

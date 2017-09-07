@@ -21,14 +21,14 @@ from jimmy.lib.api import BaseGroovyModule
 class Gerrit(BaseGroovyModule):
     source_tree_path = 'jenkins.gerrit'
 
-    def update_dest(self, source, jenkins_url, jenkins_cli_path, **kwargs):
+    def update_dest(self, source, jenkins_url, jenkins_cli_path, jenkins_cli_mode, **kwargs):
         data = self._tree_read(source, self.source_tree_path)
         servers = data["servers"]
         for s in servers:
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "'{0}'".format(s["hostname"]),  # jenkins-cli bug workaround

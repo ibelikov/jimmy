@@ -30,5 +30,5 @@ class TestCase(object):
         with open(os.path.join(jimmy_dir, 'jimmy.yaml'), 'r') as f:
             self.jimmy_yaml = f.read()
             self.mock_jimmy_yaml = self.jimmy_yaml.replace(
-                "jenkins_cli_path: /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar",
+                "jenkins_cli_path: /var/jenkins_home/war/WEB-INF/jenkins-cli.jar",
                 "jenkins_cli_path: << path to jenkins-cli.jar >>")

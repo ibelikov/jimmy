@@ -76,7 +76,8 @@ class TestJimmySchema(base.TestCase):
                                       '  - name: teardown',
                                       'envs:',
                                       '  main:',
-                                      '    jenkins_url: http://localhost:8080'
+                                      '    jenkins_url: http://localhost:8080',
+                                      '    jenkins_cli_mode: "-remoting"'
                                   ])
                               })
         schema = yaml_reader.read(jimmy_schema_path)

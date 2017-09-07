@@ -21,13 +21,13 @@ from jimmy.lib.api import BaseGroovyModule
 class JenkinsConfiguration(BaseGroovyModule):
     source_tree_path = 'jenkins.configuration'
 
-    def update_dest(self, source, jenkins_url, jenkins_cli_path, **kwargs):
+    def update_dest(self, source, jenkins_url, jenkins_cli_path, jenkins_cli_mode, **kwargs):
         data = self._tree_read(source, self.source_tree_path)
         if "admin_email" in data:
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setAdminEmail",
@@ -40,7 +40,7 @@ class JenkinsConfiguration(BaseGroovyModule):
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setAgentTcpPort",
@@ -53,7 +53,7 @@ class JenkinsConfiguration(BaseGroovyModule):
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setLocationUrl",
@@ -66,7 +66,7 @@ class JenkinsConfiguration(BaseGroovyModule):
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setMarkupFormatter",
@@ -79,7 +79,7 @@ class JenkinsConfiguration(BaseGroovyModule):
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setNumExecutors",
@@ -92,7 +92,7 @@ class JenkinsConfiguration(BaseGroovyModule):
             try:
                 subprocess.call(["java",
                                  "-jar", jenkins_cli_path,
-                                 "-s", jenkins_url,
+                                 "-s", jenkins_url, jenkins_cli_mode,
                                  "groovy",
                                  self.groovy_path,
                                  "setScmCheckoutRetryCount",

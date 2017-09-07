@@ -22,7 +22,7 @@ from string import Template
 class Kubernetes(BaseGroovyModule):
     source_tree_path = 'jenkins.kubernetes'
 
-    def update_dest(self, source, jenkins_url, jenkins_cli_path, **kwargs):
+    def update_dest(self, source, jenkins_url, jenkins_cli_path, jenkins_cli_mode, **kwargs):
         data = self._tree_read(source, self.source_tree_path)
         for cloud in data['clouds']:
             with open(self.groovy_path) as groovy_template:
@@ -32,7 +32,7 @@ class Kubernetes(BaseGroovyModule):
             try:
                 cli_call = subprocess.Popen(["java",
                                              "-jar", jenkins_cli_path,
-                                             "-s", jenkins_url,
+                                             "-s", jenkins_url, jenkins_cli_mode,
                                              "groovy",
                                              '='
                                              ], stdin=subprocess.PIPE,

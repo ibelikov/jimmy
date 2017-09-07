@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y python-pip
 
 RUN mkdir -p /etc/jimmy
 ADD sample/docker /etc/jimmy
+COPY jimmy/jimmy.yaml /etc/jimmy/jimmy.yaml
 
 VOLUME /etc/jimmy
 

@@ -68,7 +68,7 @@ class TestGitConfiguration(base.TestCase):
         self.runner.invoke(cli)
         mock_subp.assert_called_with(
            ['java', '-jar', '<< path to jenkins-cli.jar >>',
-            '-s', 'http://localhost:8080', 'groovy',
+            '-s', 'http://localhost:8080', '-remoting', 'groovy',
             modules_dir + '/' + 'git/resources/jenkins.groovy',
             "'jenkins@example.com'", "'Jenkins'"
             ], shell=False)

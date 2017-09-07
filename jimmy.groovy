@@ -13,7 +13,7 @@ Thread.start {
 
   generateKeys.waitForOrKill(1000)
 
-  def runJimmy = 'jimmy -c /etc/jimmy/jimmy.yaml'.execute()
+  def runJimmy = 'jimmy -c /etc/jimmy/jimmy.yaml -e docker'.execute()
   runJimmy.consumeProcessOutput(sout, serr)
   runJimmy.waitForOrKill(100000)
   println "out> $sout"

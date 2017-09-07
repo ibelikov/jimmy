@@ -90,6 +90,7 @@ jenkins:
         - overall
     cli_user:
       name: admin
+      password: password
       public_key: !include-text:
         /var/jenkins_home/.ssh/id_rsa.pub
 

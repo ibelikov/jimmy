@@ -4,6 +4,8 @@ build
 *.pyc
 
 .cache
+.project
+.settings
 .tox
 venv/*
 
